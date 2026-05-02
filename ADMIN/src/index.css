@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&family=Sora:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg-top: #f6fbff;
+  --bg-mid: #eef4ff;
+  --bg-bottom: #fdf8f1;
+  --ink-strong: #0f172a;
+}
+
+@layer base {
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    color: var(--ink-strong);
+    background:
+      radial-gradient(circle at 0% 0%, rgba(14, 165, 233, 0.16), transparent 32%),
+      radial-gradient(circle at 100% 12%, rgba(249, 115, 22, 0.16), transparent 28%),
+      linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 46%, var(--bg-bottom) 100%);
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before,
+  body::after {
+    content: '';
+    position: fixed;
+    inset: auto;
+    z-index: -1;
+    border-radius: 999px;
+    filter: blur(70px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  body::before {
+    width: 18rem;
+    height: 18rem;
+    top: 4rem;
+    left: -4rem;
+    background: rgba(56, 189, 248, 0.18);
+  }
+
+  body::after {
+    width: 22rem;
+    height: 22rem;
+    right: -5rem;
+    bottom: 8rem;
+    background: rgba(249, 115, 22, 0.14);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Sora', sans-serif;
+    letter-spacing: -0.025em;
+  }
+
+  .font-arabic {
+    font-family: 'Noto Naskh Arabic', serif;
+    direction: rtl;
+    text-align: right;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    @apply transition-all duration-200;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_45px_-25px_rgba(15,118,110,0.85)] disabled:cursor-not-allowed disabled:opacity-50;
+    background: linear-gradient(135deg, #0f766e 0%, #155e75 100%);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 22px 48px -24px rgba(21, 94, 117, 0.9);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/80 px-5 py-3 text-sm font-semibold text-slate-700 shadow-[0_16px_40px_-28px_rgba(15,23,42,0.55)] backdrop-blur-xl disabled:cursor-not-allowed disabled:opacity-50;
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_45px_-25px_rgba(225,29,72,0.75)] disabled:cursor-not-allowed disabled:opacity-50;
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-[0_4px_12px_-4px_rgba(15,23,42,0.08)] outline-none backdrop-blur-xl placeholder:text-slate-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100/80;
+  }
+
+  .card {
+    @apply rounded-[30px] border border-white/70 bg-white/80 shadow-[0_24px_70px_-38px_rgba(15,23,42,0.55)] backdrop-blur-2xl;
+  }
+
+  .page-shell {
+    @apply mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-8;
+  }
+
+  .page-hero {
+    @apply card relative overflow-hidden px-6 py-6 sm:px-8 sm:py-7;
+  }
+
+  .page-hero::after {
+    content: '';
+    position: absolute;
+    inset: auto -4rem -5rem auto;
+    width: 16rem;
+    height: 16rem;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.18), transparent 70%);
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    @apply inline-flex w-fit items-center gap-2 rounded-full border border-cyan-200/70 bg-cyan-50/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700;
+  }
+
+  .metric-card {
+    @apply card relative overflow-hidden px-5 py-5;
+  }
+
+  .section-panel {
+    @apply card p-4 sm:p-5;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-semibold text-slate-800;
+  }
+
+  .field-help {
+    @apply text-xs leading-5 text-slate-500;
+  }
+
+  .icon-badge {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-2xl;
+  }
+
+  .icon-badge-primary {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(14, 165, 233, 0.18));
+    color: #0f766e;
+  }
+
+  .icon-badge-muted {
+    @apply bg-slate-100 text-slate-500;
+  }
+
+  .filter-chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-600 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)] backdrop-blur-xl;
+  }
+
+  .filter-chip-active {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(14, 165, 233, 0.16));
+    color: #115e59;
+    border-color: rgba(125, 211, 252, 0.8);
+  }
+
+  .status-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  .status-pill-hajj {
+    @apply bg-emerald-50 text-emerald-700;
+  }
+
+  .status-pill-umrah {
+    @apply bg-sky-50 text-sky-700;
+  }
+
+  .status-pill-both {
+    @apply bg-orange-50 text-orange-700;
+  }
+
+  .status-pill-highlight {
+    @apply bg-amber-50 text-amber-700;
+  }
+
+  .icon-action {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/80 bg-white/70 text-slate-500 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.7)] backdrop-blur-xl hover:-translate-y-0.5 hover:text-slate-900;
+  }
+
+  .dropzone {
+    @apply rounded-[28px] border border-dashed border-cyan-200 bg-cyan-50/55 px-4 py-5;
+  }
+
+  .table-stack {
+    @apply grid grid-cols-1 gap-4 xl:grid-cols-2;
+  }
+
+  .content-card {
+    @apply card overflow-hidden p-5;
+  }
+
+  .modal-shell {
+    @apply relative w-full max-w-4xl rounded-[34px] border border-slate-200/80 bg-[rgb(248,250,252)] shadow-[0_40px_120px_-40px_rgba(15,23,42,0.75)];
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300;
+}
