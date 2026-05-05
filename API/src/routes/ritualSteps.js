@@ -24,14 +24,15 @@ const buildPayload = (body, existing = {}) => ({
   isActive: body.isActive !== undefined ? body.isActive === 'true' : existing.isActive,
 });
 
-router.get('/', protect, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { ritualType, isHighlighted, isActive } = req.query;
     const filter = {};
 
     if (ritualType) filter.ritualType = ritualType;
     if (isHighlighted !== undefined) filter.isHighlighted = isHighlighted === 'true';
-    if (isActive !== undefined) filter.isActive = isActive === 'true';
+    // Mobile app always gets active steps only
+    filter.isActive = isActive !== undefined ? isActive === 'true' : true;
 
     const steps = await RitualStep.find(filter).sort({ ritualType: 1, stepNumber: 1 });
     res.json({ success: true, data: steps });
@@ -40,7 +41,7 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-router.get('/:id', protect, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const step = await RitualStep.findById(req.params.id);
     if (!step) {

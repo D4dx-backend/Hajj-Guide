@@ -30,7 +30,7 @@ const buildPayload = (body, existing = {}) => ({
   isActive: body.isActive !== undefined ? body.isActive === 'true' : existing.isActive,
 });
 
-router.get('/', protect, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { ritualType, category, isHighlighted, isActive, ritualStep } = req.query;
     const filter = {};
@@ -39,7 +39,8 @@ router.get('/', protect, async (req, res) => {
     if (category) filter.category = category;
     if (ritualStep) filter.ritualStep = ritualStep;
     if (isHighlighted !== undefined) filter.isHighlighted = isHighlighted === 'true';
-    if (isActive !== undefined) filter.isActive = isActive === 'true';
+    // Mobile app always gets active duas only
+    filter.isActive = isActive !== undefined ? isActive === 'true' : true;
 
     const duas = await Dua.find(filter)
       .populate('ritualStep', 'title stepNumber ritualType')
@@ -51,7 +52,7 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-router.get('/:id', protect, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const dua = await Dua.findById(req.params.id).populate('ritualStep', 'title stepNumber ritualType');
     if (!dua) {

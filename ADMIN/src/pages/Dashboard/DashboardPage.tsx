@@ -9,9 +9,11 @@ import {
   FiLoader,
   FiMusic,
   FiStar,
+  FiToggleLeft,
+  FiToggleRight,
 } from 'react-icons/fi';
 import api from '../../api/axios';
-import type { DashboardStats } from '../../types';
+import type { AppSettings, DashboardStats } from '../../types';
 
 const StatCard: React.FC<{
   label: string;
@@ -45,6 +47,8 @@ const DashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [settingsLoading, setSettingsLoading] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -58,8 +62,32 @@ const DashboardPage: React.FC = () => {
       }
     };
 
+    const fetchSettings = async () => {
+      try {
+        const response = await api.get('/settings');
+        setSettings(response.data.data as AppSettings);
+      } catch {
+        // non-blocking — settings panel will just not appear
+      }
+    };
+
     fetchStats();
+    fetchSettings();
   }, []);
+
+  const toggleHighlightedRitual = async () => {
+    if (!settings || settingsLoading) return;
+    const next = settings.highlightedRitual === 'hajj' ? 'umrah' : 'hajj';
+    setSettingsLoading(true);
+    try {
+      const response = await api.put('/settings', { highlightedRitual: next });
+      setSettings(response.data.data as AppSettings);
+    } catch {
+      // revert on failure — nothing to do since state didn't change
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -101,6 +129,39 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {settings && (
+        <section className="section-panel">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-950">App Highlight Mode</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Controls which ritual is featured prominently in the mobile app home screen.
+              </p>
+            </div>
+            <button
+              onClick={toggleHighlightedRitual}
+              disabled={settingsLoading}
+              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm transition hover:border-cyan-300 hover:shadow-md disabled:opacity-50"
+            >
+              {settingsLoading ? (
+                <FiLoader className="h-5 w-5 animate-spin text-cyan-600" />
+              ) : settings.highlightedRitual === 'hajj' ? (
+                <FiToggleRight className="h-6 w-6 text-emerald-600" />
+              ) : (
+                <FiToggleLeft className="h-6 w-6 text-sky-600" />
+              )}
+              <span
+                className={`text-sm font-semibold ${
+                  settings.highlightedRitual === 'hajj' ? 'text-emerald-700' : 'text-sky-700'
+                }`}
+              >
+                {settings.highlightedRitual === 'hajj' ? '🕋 Hajj' : '🌙 Umrah'}
+              </span>
+            </button>
+          </div>
+        </section>
+      )}
 
       {stats && (
         <>

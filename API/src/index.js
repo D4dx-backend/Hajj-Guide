@@ -39,6 +39,7 @@ app.use('/api/ritual-steps', require('./routes/ritualSteps'));
 app.use('/api/duas', require('./routes/duas'));
 app.use('/api/audio', require('./routes/audio'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/settings', require('./routes/settings'));
 
 // Health check
 app.get('/health', (_req, res) => {

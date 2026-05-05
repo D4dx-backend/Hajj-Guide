@@ -87,3 +87,7 @@ export interface ApiResponse<T> {
   data?: T;
   message?: string;
 }
+
+export interface AppSettings {
+  highlightedRitual: 'hajj' | 'umrah';
+}
