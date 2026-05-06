@@ -28,6 +28,14 @@ const ritualStepSchema = new mongoose.Schema(
       type: mediaAssetSchema,
       default: null,
     },
+    videoLink: {
+      type: String,
+      default: '',
+    },
+    video: {
+      type: mediaAssetSchema,
+      default: null,
+    },
     isHighlighted: {
       type: Boolean,
       default: false,

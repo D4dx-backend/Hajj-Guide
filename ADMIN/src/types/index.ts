@@ -27,6 +27,8 @@ export interface RitualStep {
   instructions: MultiLangText[];
   referenceLink?: string;
   attachment?: MediaAsset | null;
+  videoLink?: string;
+  video?: MediaAsset | null;
   isHighlighted: boolean;
   isActive: boolean;
   createdAt: string;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { FiLoader, FiPlus, FiTrash2, FiX } from 'react-icons/fi';
+import { FiLink, FiLoader, FiPlus, FiTrash2, FiUploadCloud, FiVideo, FiX } from 'react-icons/fi';
 import MediaAttachmentField from '../../components/common/MediaAttachmentField';
 import type { RitualStep, RitualType } from '../../types';
 
@@ -30,6 +30,12 @@ const RitualStepForm: React.FC<RitualStepFormProps> = ({
   const [referenceLink, setReferenceLink] = useState(initial?.referenceLink ?? '');
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const [removeExistingAttachment, setRemoveExistingAttachment] = useState(false);
+  const [videoSource, setVideoSource] = useState<'link' | 'file'>(
+    initial?.video ? 'file' : 'link'
+  );
+  const [videoLink, setVideoLink] = useState(initial?.videoLink ?? '');
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [removeExistingVideo, setRemoveExistingVideo] = useState(false);
   const [instructions, setInstructions] = useState<{ id: number; arabic: string; malayalam: string }[]>(
     initial?.instructions?.length
       ? initial.instructions.map((inst) => ({ id: ++instructionIdCounter, ...inst }))
@@ -71,6 +77,19 @@ const RitualStepForm: React.FC<RitualStepFormProps> = ({
     }
     if (removeExistingAttachment) {
       formData.append('removeAttachment', 'true');
+    }
+
+    if (videoSource === 'link') {
+      formData.append('videoLink', videoLink);
+      if (initial?.video) formData.append('removeVideo', 'true');
+    } else {
+      formData.append('videoLink', '');
+      if (videoFile) {
+        formData.append('videoFile', videoFile);
+      }
+      if (removeExistingVideo) {
+        formData.append('removeVideo', 'true');
+      }
     }
 
     onSubmit(formData);
@@ -186,6 +205,53 @@ const RitualStepForm: React.FC<RitualStepFormProps> = ({
               onFileChange={setAttachmentFile}
               onRemoveExistingChange={setRemoveExistingAttachment}
             />
+          </div>
+
+          {/* Video section */}
+          <div className="space-y-3">
+            <div>
+              <label className="field-label">Video</label>
+              <p className="field-help">Attach a video file or provide an external video link.</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setVideoSource('link')}
+                className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${videoSource === 'link' ? 'bg-cyan-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+              >
+                <FiLink className="h-3.5 w-3.5" />
+                Video link
+              </button>
+              <button
+                type="button"
+                onClick={() => setVideoSource('file')}
+                className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${videoSource === 'file' ? 'bg-cyan-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+              >
+                <FiUploadCloud className="h-3.5 w-3.5" />
+                Upload file
+              </button>
+            </div>
+
+            {videoSource === 'link' ? (
+              <input
+                type="url"
+                value={videoLink}
+                onChange={(event) => setVideoLink(event.target.value)}
+                className="input-field"
+                placeholder="https://youtube.com/watch?v=... or any video URL"
+              />
+            ) : (
+              <MediaAttachmentField
+                label="Video file"
+                helperText="Upload an mp4, mov, or other video file."
+                accept="video/*"
+                file={videoFile}
+                existingAsset={initial?.video}
+                removeExisting={removeExistingVideo}
+                onFileChange={(f) => { setVideoFile(f); if (f) setRemoveExistingVideo(false); }}
+                onRemoveExistingChange={setRemoveExistingVideo}
+              />
+            )}
           </div>
 
           </div>

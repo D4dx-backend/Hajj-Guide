@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FiEdit2, FiExternalLink, FiImage, FiLoader, FiPlus, FiStar, FiToggleLeft, FiToggleRight, FiTrash2 } from 'react-icons/fi';
+import { FiEdit2, FiExternalLink, FiImage, FiLink, FiLoader, FiPlus, FiStar, FiToggleLeft, FiToggleRight, FiTrash2, FiVideo } from 'react-icons/fi';
 import api from '../../api/axios';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import RitualTypeToggle from '../../components/common/RitualTypeToggle';
@@ -169,6 +169,18 @@ const RitualStepsPage: React.FC = () => {
                   <a href={step.attachment.url} target="_blank" rel="noreferrer" className="filter-chip">
                     <FiImage className="h-3.5 w-3.5" />
                     {step.attachment.kind}
+                  </a>
+                )}
+                {step.videoLink && (
+                  <a href={step.videoLink} target="_blank" rel="noreferrer" className="filter-chip">
+                    <FiLink className="h-3.5 w-3.5" />
+                    Video link
+                  </a>
+                )}
+                {step.video && (
+                  <a href={step.video.url} target="_blank" rel="noreferrer" className="filter-chip">
+                    <FiVideo className="h-3.5 w-3.5" />
+                    Video
                   </a>
                 )}
               </div>

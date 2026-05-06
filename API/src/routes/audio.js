@@ -18,7 +18,7 @@ const removeLegacyFile = (filename) => {
   }
 };
 
-router.get('/', protect, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { type, isActive } = req.query;
     const filter = {};
@@ -35,7 +35,7 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-router.get('/:id', protect, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const audio = await Audio.findById(req.params.id).populate('duaReference', 'title category');
     if (!audio) {

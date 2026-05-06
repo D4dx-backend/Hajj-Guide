@@ -19,6 +19,7 @@ const buildPayload = (body, existing = {}) => ({
   description: parseJsonField(body.description, existing.description),
   instructions: parseJsonField(body.instructions, existing.instructions || []),
   referenceLink: body.referenceLink !== undefined ? body.referenceLink : existing.referenceLink || '',
+  videoLink: body.videoLink !== undefined ? body.videoLink : existing.videoLink || '',
   isHighlighted:
     body.isHighlighted !== undefined ? body.isHighlighted === 'true' : existing.isHighlighted,
   isActive: body.isActive !== undefined ? body.isActive === 'true' : existing.isActive,
@@ -53,12 +54,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', protect, contentUpload.single('attachmentFile'), async (req, res) => {
+router.post('/', protect, contentUpload.fields([{ name: 'attachmentFile', maxCount: 1 }, { name: 'videoFile', maxCount: 1 }]), async (req, res) => {
   try {
     const step = new RitualStep(buildPayload(req.body));
 
-    if (req.file) {
-      step.attachment = await uploadBuffer({ file: req.file, folder: 'ritual-steps' });
+    const attachmentFile = req.files?.['attachmentFile']?.[0];
+    const videoFile = req.files?.['videoFile']?.[0];
+
+    if (attachmentFile) {
+      step.attachment = await uploadBuffer({ file: attachmentFile, folder: 'ritual-steps' });
+    }
+    if (videoFile) {
+      step.video = await uploadBuffer({ file: videoFile, folder: 'ritual-steps/videos' });
     }
 
     await step.save();
@@ -68,7 +75,7 @@ router.post('/', protect, contentUpload.single('attachmentFile'), async (req, re
   }
 });
 
-router.put('/:id', protect, contentUpload.single('attachmentFile'), async (req, res) => {
+router.put('/:id', protect, contentUpload.fields([{ name: 'attachmentFile', maxCount: 1 }, { name: 'videoFile', maxCount: 1 }]), async (req, res) => {
   try {
     const existing = await RitualStep.findById(req.params.id);
     if (!existing) {
@@ -78,16 +85,25 @@ router.put('/:id', protect, contentUpload.single('attachmentFile'), async (req, 
     const payload = buildPayload(req.body, existing);
     Object.assign(existing, payload);
 
+    const attachmentFile = req.files?.['attachmentFile']?.[0];
+    const videoFile = req.files?.['videoFile']?.[0];
+
     if (req.body.removeAttachment === 'true' && existing.attachment?.key) {
       await deleteObject(existing.attachment.key);
       existing.attachment = null;
     }
+    if (attachmentFile) {
+      if (existing.attachment?.key) await deleteObject(existing.attachment.key);
+      existing.attachment = await uploadBuffer({ file: attachmentFile, folder: 'ritual-steps' });
+    }
 
-    if (req.file) {
-      if (existing.attachment?.key) {
-        await deleteObject(existing.attachment.key);
-      }
-      existing.attachment = await uploadBuffer({ file: req.file, folder: 'ritual-steps' });
+    if (req.body.removeVideo === 'true' && existing.video?.key) {
+      await deleteObject(existing.video.key);
+      existing.video = null;
+    }
+    if (videoFile) {
+      if (existing.video?.key) await deleteObject(existing.video.key);
+      existing.video = await uploadBuffer({ file: videoFile, folder: 'ritual-steps/videos' });
     }
 
     await existing.save();
@@ -144,6 +160,9 @@ router.delete('/:id', protect, async (req, res) => {
 
     if (step.attachment?.key) {
       await deleteObject(step.attachment.key);
+    }
+    if (step.video?.key) {
+      await deleteObject(step.video.key);
     }
 
     return res.json({ success: true, message: 'Ritual step deleted successfully' });
