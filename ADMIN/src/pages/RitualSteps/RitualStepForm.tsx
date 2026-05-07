@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { FiLink, FiLoader, FiPlus, FiTrash2, FiUploadCloud, FiVideo, FiX } from 'react-icons/fi';
+import { FiLink, FiLoader, FiPlus, FiTrash2, FiUploadCloud, FiX } from 'react-icons/fi';
 import MediaAttachmentField from '../../components/common/MediaAttachmentField';
 import type { RitualStep, RitualType } from '../../types';
 
